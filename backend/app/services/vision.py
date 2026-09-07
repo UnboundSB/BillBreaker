@@ -1,17 +1,34 @@
 import os
+import uuid
+from pydantic import BaseModel
+from typing import List
 from google import genai
 from google.genai import types
-from app.schemas.bill import Bill
+from app.schemas.bill import Bill, BillItem
+from app.core.config import settings
+from decimal import Decimal
+
+class GeminiBillItem(BaseModel):
+    name: str
+    quantity: int
+    unit_price: float
+    item_total: float
+
+class GeminiBill(BaseModel):
+    items: List[GeminiBillItem]
+    subtotal: float
+    tax: float
+    service_charge: float
+    discount: float
+    printed_total: float
 
 def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = settings.GEMINI_API_KEY
     if not api_key:
         raise ValueError("GEMINI_API_KEY environment variable is not set")
     
     client = genai.Client(api_key=api_key)
-    
-    # We use a multimodal model
-    model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    model_name = settings.GEMINI_MODEL
     
     response = client.models.generate_content(
         model=model_name,
@@ -21,7 +38,7 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
         ],
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
-            response_schema=Bill,
+            response_schema=GeminiBill,
             temperature=0.0,
         ),
     )
@@ -29,4 +46,24 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
     if not response.parsed:
         raise ValueError("Failed to parse the bill image into structured format.")
     
-    return response.parsed
+    gemini_bill = response.parsed
+    
+    # Map to domain Bill model
+    bill_items = []
+    for item in gemini_bill.items:
+        bill_items.append(BillItem(
+            id=str(uuid.uuid4()),
+            name=item.name,
+            quantity=item.quantity,
+            unit_price=Decimal(str(item.unit_price)),
+            item_total=Decimal(str(item.item_total))
+        ))
+        
+    return Bill(
+        items=bill_items,
+        subtotal=Decimal(str(gemini_bill.subtotal)),
+        tax=Decimal(str(gemini_bill.tax)),
+        service_charge=Decimal(str(gemini_bill.service_charge)),
+        discount=Decimal(str(gemini_bill.discount)),
+        printed_total=Decimal(str(gemini_bill.printed_total))
+    )

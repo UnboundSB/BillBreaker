@@ -1,49 +1,54 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional
+from pydantic import BaseModel, Field, constr, StringConstraints
+from typing import List
+from typing_extensions import Annotated
 from decimal import Decimal
 
-# Models representing the extracted bill
+# Strict String types to prevent massive inputs
+StrictStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+IDStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50, pattern=r'^[\w-]+$')]
+
+# Strict Decimal type to prevent massive numbers (up to 99,999,999.99)
+StrictDecimal = Annotated[Decimal, Field(max_digits=10, decimal_places=2, ge=0)]
+
 class BillItem(BaseModel):
-    id: str
-    name: str
-    quantity: int = Field(ge=1, default=1)
-    unit_price: Decimal = Field(ge=0)
-    item_total: Decimal = Field(ge=0)
+    id: IDStr
+    name: StrictStr
+    quantity: int = Field(ge=1, le=10000, default=1)
+    unit_price: StrictDecimal
+    item_total: StrictDecimal
 
 class Bill(BaseModel):
-    items: List[BillItem]
-    subtotal: Decimal = Field(ge=0)
-    tax: Decimal = Field(ge=0, default=Decimal('0.00'))
-    service_charge: Decimal = Field(ge=0, default=Decimal('0.00'))
-    discount: Decimal = Field(ge=0, default=Decimal('0.00'))
-    printed_total: Decimal = Field(ge=0)
+    items: List[BillItem] = Field(max_length=500)
+    subtotal: StrictDecimal
+    tax: StrictDecimal = Field(default=Decimal('0.00'))
+    service_charge: StrictDecimal = Field(default=Decimal('0.00'))
+    discount: StrictDecimal = Field(default=Decimal('0.00'))
+    printed_total: StrictDecimal
 
-# Models for the splitting workflow
 class Person(BaseModel):
-    id: str
-    name: str
+    id: IDStr
+    name: StrictStr
 
 class ItemAssignment(BaseModel):
-    item_id: str
-    person_ids: List[str]  # List of person IDs sharing this item.
+    item_id: IDStr
+    person_ids: List[IDStr] = Field(max_length=100)
 
 class SplitRequest(BaseModel):
     bill: Bill
-    people: List[Person]
-    assignments: List[ItemAssignment]
+    people: List[Person] = Field(max_length=100, min_length=1)
+    assignments: List[ItemAssignment] = Field(max_length=500)
 
-# Models for the final calculation result
 class PersonBreakdown(BaseModel):
-    person_id: str
-    name: str
-    items_total: Decimal
-    tax: Decimal
-    service_charge: Decimal
-    discount: Decimal
-    total: Decimal
+    person_id: IDStr
+    name: StrictStr
+    items_total: StrictDecimal
+    tax: StrictDecimal
+    service_charge: StrictDecimal
+    discount: StrictDecimal
+    total: StrictDecimal
 
 class SplitResult(BaseModel):
-    calculated_total: Decimal
-    printed_total: Decimal
-    mismatch_amount: Decimal
+    calculated_total: StrictDecimal
+    printed_total: StrictDecimal
+    mismatch_amount: Decimal = Field(max_digits=10, decimal_places=2) # Can be negative
     people_breakdowns: List[PersonBreakdown]

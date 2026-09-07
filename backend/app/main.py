@@ -1,29 +1,61 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 from app.api.endpoints import router as api_router
+from app.core.config import settings
+import logging
 
-# Load environment variables from .env if present
-load_dotenv()
+# Configure basic structured logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="SplitSnap API",
-    description="API for parsing and splitting bills.",
-    version="1.0.0"
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    description="Secure, hardcore API for parsing and splitting bills."
 )
 
-# Configure CORS
+# Secure CORS config
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins, you can restrict this in production
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"], # Tightly restrict allowed methods
     allow_headers=["*"],
 )
 
-app.include_router(api_router, prefix="/api")
+# Add Security Headers Middleware
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
 
-@app.get("/api/health")
+# Hardcore error handling to avoid leaking stack traces
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled Exception: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"}
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.warning(f"Validation Error: {exc.errors()}")
+    # Obfuscate deep details optionally, or just return 422 cleanly
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "Invalid request payload", "errors": exc.errors()}
+    )
+
+app.include_router(api_router, prefix=settings.API_V1_STR)
+
+@app.get(f"{settings.API_V1_STR}/health")
 def health_check():
     return {"status": "ok"}
