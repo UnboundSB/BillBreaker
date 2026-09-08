@@ -1,17 +1,25 @@
 :root {
-  --bg-color: #e0e5ec;
-  --text-color: #333333;
+  --bg-color: #f9f7ef; /* Off-white beige */
+  --surface-color: #ede4b2; /* Beige from palette */
+  --text-color: #2d2a2a; 
+  --text-muted: #b3828a; /* Mauve from palette */
+  --primary-color: #c76372; /* Rose from palette */
+  --accent-color: #adf7ec; /* Mint from palette */
 }
 
 :root.dark {
-  --bg-color: #12161f;
-  --text-color: #f0f0f0;
+  --bg-color: #18191a; /* Off black */
+  --surface-color: #242526; 
+  --text-color: #cfd6ff; /* Periwinkle from palette */
+  --text-muted: #b3828a; 
+  --primary-color: #c76372;
+  --accent-color: #adf7ec; 
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.5s ease, color 0.5s ease;
+  transition: background-color 0.5s ease-in, color 0.5s ease-in;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   min-width: 320px;

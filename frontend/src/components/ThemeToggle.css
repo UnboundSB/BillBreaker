@@ -99,7 +99,7 @@
   height: 32px;
   border-radius: 50%;
   background-color: #ffcf33;
-  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), background-color 0.5s ease;
+  transition: transform 0.5s ease-in, background-color 0.5s ease-in;
   overflow: hidden;
   z-index: 10;
   box-shadow: 
