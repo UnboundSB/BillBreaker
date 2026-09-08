@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Secure, hardcore API for parsing and splitting bills."
+    description="Secure and robust API for parsing and splitting bills."
 )
 
 # Secure CORS config
@@ -39,7 +39,7 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
 
-# Hardcore error handling to avoid leaking stack traces
+# Global error handling to avoid leaking stack traces
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled Exception: {exc}", exc_info=True)
