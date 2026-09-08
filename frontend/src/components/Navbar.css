@@ -6,7 +6,7 @@
   width: 100%;
   border-bottom: 2px solid var(--surface-color);
   margin-bottom: 2rem;
-  flex-wrap: wrap; /* Allows wrapping on very small devices */
+  flex-wrap: wrap;
   gap: 1.5rem;
   transition: border-color 0.5s ease-in;
 }
@@ -41,22 +41,58 @@
   font-weight: 500;
 }
 
-.navbar-links {
+.navbar-stages {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.nav-link {
+.stage-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, color 0.3s ease;
   color: var(--text-color);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: color 0.2s ease;
 }
 
-.nav-link:hover {
+.stage-indicator.active {
+  opacity: 1;
   color: var(--primary-color);
+  font-weight: 600;
+}
+
+.stage-indicator.completed {
+  opacity: 0.8;
+  color: var(--accent-color);
+}
+
+.stage-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--surface-color);
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.stage-indicator.active .stage-number {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.stage-indicator.completed .stage-number {
+  background-color: var(--accent-color);
+  color: #1a1a1c;
+}
+
+.stage-name {
+  font-size: 0.9rem;
 }
 
 .navbar-actions {
@@ -64,7 +100,12 @@
   align-items: center;
 }
 
-/* Responsive adjustments for mobile and smartwatches */
+@media (max-width: 900px) {
+  .navbar-stages {
+    display: none; /* Hide textual stages on very small screens, could replace with a simple text like "Step 1 of 5" */
+  }
+}
+
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -74,12 +115,5 @@
   .navbar-brand {
     flex-direction: column;
     gap: 0.5rem;
-  }
-  
-  .navbar-links {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
   }
 }
