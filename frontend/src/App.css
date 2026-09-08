@@ -1,0 +1,13 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}

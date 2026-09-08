@@ -1,0 +1,247 @@
+.theme-toggle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.theme-toggle {
+  position: relative;
+  display: inline-block;
+  width: 160px;
+  height: 80px;
+  cursor: pointer;
+  /* Outer bevel around the switch to give it physical housing */
+  border-radius: 44px;
+  background: linear-gradient(145deg, #f0f0f0, #cacaca);
+  box-shadow: 
+    4px 4px 8px #bebebe, 
+    -4px -4px 8px #ffffff;
+  padding: 4px;
+}
+
+.theme-toggle-checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  background: #5fa5e6;
+  overflow: hidden;
+  transition: background 0.5s ease;
+  /* Deep inset shadow for the recessed pill look */
+  box-shadow: 
+    inset 0px 10px 20px rgba(0, 0, 0, 0.4),
+    inset 0px -5px 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Base Sky styling */
+.sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease;
+}
+
+.light-sky {
+  opacity: 1;
+  background: linear-gradient(180deg, #499ee8 0%, #7bbbf0 100%);
+}
+
+.dark-sky {
+  opacity: 0;
+  background: linear-gradient(180deg, #18202d 0%, #29384a 100%);
+}
+
+/* Clouds styling */
+.cloud {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  /* Skeuomorphic inner shadow to give the cloud volume */
+  box-shadow: 
+    inset -4px -4px 6px rgba(0,0,0,0.1),
+    inset 4px 4px 6px rgba(255,255,255,1),
+    3px 3px 6px rgba(0,0,0,0.1);
+}
+
+.cloud-1 {
+  width: 70px;
+  height: 70px;
+  bottom: -20px;
+  right: -10px;
+}
+
+.cloud-2 {
+  width: 50px;
+  height: 50px;
+  bottom: -15px;
+  right: 40px;
+}
+
+.cloud-3 {
+  width: 60px;
+  height: 60px;
+  bottom: -30px;
+  right: 70px;
+}
+
+.cloud-4 {
+  width: 40px;
+  height: 40px;
+  bottom: -5px;
+  right: 120px;
+}
+
+/* Stars styling */
+.star {
+  position: absolute;
+  background: #ffffff;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  box-shadow: 0 0 6px 2px rgba(255,255,255,0.8);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.star-1 { width: 12px; height: 12px; top: 15px; left: 40px; }
+.star-2 { width: 8px; height: 8px; top: 45px; left: 25px; }
+.star-3 { width: 10px; height: 10px; top: 55px; left: 65px; transform: rotate(15deg); }
+.star-4 { width: 7px; height: 7px; top: 25px; left: 75px; transform: rotate(45deg); }
+.star-5 { width: 15px; height: 15px; top: 35px; left: 100px; transform: rotate(30deg); }
+
+/* Thumb (Sun/Moon wrapper) */
+.theme-toggle-thumb {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #ffcf33; /* Sun color */
+  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), background-color 0.5s ease;
+  overflow: hidden;
+  z-index: 10;
+  
+  /* Skeuomorphic 3D button effect */
+  box-shadow: 
+    inset -4px -4px 8px rgba(0, 0, 0, 0.2), 
+    inset 4px 4px 8px rgba(255, 255, 255, 0.9), 
+    4px 4px 12px rgba(0, 0, 0, 0.3); 
+}
+
+/* Sun and Moon faces inside the thumb */
+.sun-face, .moon-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transition: opacity 0.5s ease;
+}
+
+.sun-face {
+  opacity: 1;
+}
+
+.moon-face {
+  opacity: 0;
+}
+
+/* Craters */
+.crater {
+  position: absolute;
+  background-color: #9299a6;
+  border-radius: 50%;
+  /* Inset shadow to make craters look indented deeply */
+  box-shadow: 
+    inset 3px 3px 5px rgba(0,0,0,0.4), 
+    inset -2px -2px 4px rgba(255,255,255,0.6);
+}
+
+.crater-1 {
+  width: 16px;
+  height: 16px;
+  top: 12px;
+  right: 14px;
+}
+
+.crater-2 {
+  width: 24px;
+  height: 24px;
+  bottom: 10px;
+  right: 20px;
+}
+
+.crater-3 {
+  width: 14px;
+  height: 14px;
+  bottom: 18px;
+  left: 10px;
+}
+
+/* --- STATE CHANGES (When Checked - Dark Mode) --- */
+.theme-toggle-checkbox:checked ~ .theme-toggle-track {
+  background: #1e2837;
+  /* Dark mode recessed shadow */
+  box-shadow: 
+    inset 0px 10px 20px rgba(0, 0, 0, 0.8),
+    inset 0px -5px 15px rgba(255, 255, 255, 0.05);
+}
+
+.theme-toggle-checkbox:checked ~ .theme-toggle-track .theme-toggle-thumb {
+  transform: translateX(76px);
+  background-color: #cdd1d9; /* Moon base color */
+  
+  /* Adjusted thumb shadow for dark mode */
+  box-shadow: 
+    inset -4px -4px 8px rgba(0, 0, 0, 0.3), 
+    inset 4px 4px 8px rgba(255, 255, 255, 1), 
+    -4px 4px 12px rgba(0, 0, 0, 0.5); 
+}
+
+.theme-toggle-checkbox:checked ~ .theme-toggle-track .sun-face {
+  opacity: 0;
+}
+
+.theme-toggle-checkbox:checked ~ .theme-toggle-track .moon-face {
+  opacity: 1;
+}
+
+.theme-toggle-checkbox:checked ~ .theme-toggle-track .light-sky {
+  opacity: 0;
+}
+
+.theme-toggle-checkbox:checked ~ .theme-toggle-track .dark-sky {
+  opacity: 1;
+}
+
+.theme-toggle-checkbox:checked ~ .theme-toggle-track .dark-sky .star {
+  opacity: 1;
+}
+
+/* Global Dark Mode classes (for the document body) */
+:root {
+  --bg-color: #e0e5ec;
+  --text-color: #333333;
+}
+
+:root.dark {
+  --bg-color: #12161f;
+  --text-color: #f0f0f0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.5s ease, color 0.5s ease;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
