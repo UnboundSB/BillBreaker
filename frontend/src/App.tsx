@@ -1,16 +1,10 @@
-import { ThemeToggle } from './components/ThemeToggle';
+import { Navbar } from './components/Navbar';
 import './App.css';
 
 function App() {
   return (
     <div className="app-container">
-      <header className="app-header">
-        <div className="logo-container">
-          <h1>BillBreaker</h1>
-          <p className="subtitle">Split bills, not friendships.</p>
-        </div>
-        <ThemeToggle />
-      </header>
+      <Navbar />
       
       <main className="app-main">
         <section className="palette-showcase">
