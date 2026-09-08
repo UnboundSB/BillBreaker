@@ -9,6 +9,7 @@ import ReviewStage from './components/ReviewStage';
 import PeopleStage from './components/PeopleStage';
 import AssignmentStage from './components/AssignmentStage';
 import ResultsStage from './components/ResultsStage';
+import BackgroundIsometric from './components/BackgroundIsometric';
 
 export type Stage = 'upload' | 'review' | 'people' | 'assign' | 'results';
 
@@ -38,9 +39,7 @@ function App() {
 
   return (
     <div className="font-sans relative min-h-screen">
-      <div className="w-full h-full absolute inset-0 z-[-1] bg-[#111111] transition-colors duration-500 overflow-hidden">
-        {/* Background will go here */}
-      </div>
+      <BackgroundIsometric />
       
       {/* Skeuomorphic Bezel - moved behind content (z-0) but above background (z-[-1]) */}
       <div className="fixed inset-0 pointer-events-none z-0 hidden md:block p-3 lg:p-5">
