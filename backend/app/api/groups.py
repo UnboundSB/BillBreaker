@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from typing import List
 from app.db.database import get_db
 from app.db.models import User, Group, GroupMember
@@ -15,20 +15,19 @@ def create_group(group_in: GroupCreate, db: Session = Depends(get_db), current_u
         default_split_profile=group_in.default_split_profile,
         owner_id=current_user.id
     )
-    db.add(db_group)
-    db.flush() # flush to get db_group.id
     
     for member_name in group_in.members:
-        member = GroupMember(group_id=db_group.id, name=member_name)
-        db.add(member)
+        member = GroupMember(name=member_name)
+        db_group.members.append(member)
         
+    db.add(db_group)
     db.commit()
     db.refresh(db_group)
     return db_group
 
 @router.get("/", response_model=List[GroupOut])
 def get_groups(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    groups = db.query(Group).filter(Group.owner_id == current_user.id).all()
+    groups = db.query(Group).options(selectinload(Group.members)).filter(Group.owner_id == current_user.id).all()
     return groups
 
 @router.delete("/{group_id}")

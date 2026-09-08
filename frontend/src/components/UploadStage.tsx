@@ -14,6 +14,66 @@ export default function UploadStage({ onUploadComplete }: UploadStageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
+  const handleSkip = () => {
+    onUploadComplete({
+      items: [],
+      subtotal: 0,
+      tax: 0,
+      service_charge: 0,
+      discount: 0,
+      printed_total: 0,
+      currency_symbol: '$'
+    });
+  };
+
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1920;
+          const MAX_HEIGHT = 1080;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              }));
+            } else {
+              reject(new Error('Canvas to Blob failed'));
+            }
+          }, 'image/jpeg', 0.8);
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
   const handleFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       setError('Please upload an image file (JPEG, PNG).');
@@ -22,10 +82,11 @@ export default function UploadStage({ onUploadComplete }: UploadStageProps) {
     setError(null);
     setIsLoading(true);
     
-    const formData = new FormData();
-    formData.append('image', file);
-
     try {
+      const compressedFile = await compressImage(file);
+      const formData = new FormData();
+      formData.append('image', compressedFile);
+
       const response = await fetch('/api/parse', {
         method: 'POST',
         body: formData,
@@ -131,6 +192,15 @@ export default function UploadStage({ onUploadComplete }: UploadStageProps) {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleSkip}
+            className="text-sm font-medium text-text-secondary hover:text-brand-primary transition-colors underline underline-offset-4"
+          >
+            Skip and enter bill details manually
+          </button>
         </div>
 
         <AnimatePresence>

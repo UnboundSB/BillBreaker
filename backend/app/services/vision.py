@@ -34,6 +34,7 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
     client = genai.Client(api_key=api_key)
     model_name = settings.GEMINI_MODEL
     
+    prompt = (
         "Extract the structured information from this bill or receipt. "
         "Include all items, quantities, and prices. Extract the subtotal, tax, service charge, discount, and printed total. "
         "Extract the currency symbol used on the bill (e.g. $, €, £). If none is found, default to $. "

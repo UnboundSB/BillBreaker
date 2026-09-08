@@ -17,7 +17,7 @@ interface Group {
 
 export default function PeopleStage({ people, onNext, onBack }: PeopleStageProps) {
   const [localPeople, setLocalPeople] = useState<Person[]>(
-    people.length > 0 ? people : [{ id: '1', name: '' }]
+    people.length > 0 ? people : [{ id: '1', name: 'Me' }]
   );
   
   const { user, token } = useAuth();
@@ -114,22 +114,34 @@ export default function PeopleStage({ people, onNext, onBack }: PeopleStageProps
         <p className="text-text-secondary">Add everyone who will be splitting the bill.</p>
       </div>
 
-      {groups.length > 0 && (
+      {user ? (
         <div className="glass-panel p-4 mb-6">
           <h3 className="text-sm font-semibold text-text-secondary mb-3 flex items-center gap-2">
             <Users size={16} /> Saved Groups
           </h3>
-          <div className="flex flex-wrap gap-2">
-            {groups.map(group => (
-              <button
-                key={group.id}
-                onClick={() => loadGroup(group)}
-                className="px-3 py-1.5 rounded-lg border border-border bg-subtle-bg hover:border-brand-primary hover:text-brand-primary transition-colors text-sm font-medium"
-              >
-                {group.name}
-              </button>
-            ))}
-          </div>
+          {groups.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {groups.map(group => (
+                <button
+                  key={group.id}
+                  onClick={() => loadGroup(group)}
+                  className="px-3 py-1.5 rounded-lg border border-border bg-subtle-bg hover:border-brand-primary hover:text-brand-primary transition-colors text-sm font-medium"
+                >
+                  {group.name}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-text-secondary/70 italic">
+              No saved groups yet. Add people below and save them as a group for quick selection next time!
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="glass-panel p-4 mb-6">
+          <p className="text-xs text-text-secondary/70 italic">
+            Log in to create and quickly select saved groups of friends.
+          </p>
         </div>
       )}
 
@@ -177,14 +189,14 @@ export default function PeopleStage({ people, onNext, onBack }: PeopleStageProps
         </button>
       </div>
 
-      {user && localPeople.filter(p => p.name.trim() !== '').length > 1 && (
+      {user && localPeople.filter(p => p.name.trim() !== '').length > 0 && (
         <div className="glass-panel p-4">
           {!showSaveGroup ? (
             <button 
               onClick={() => setShowSaveGroup(true)}
               className="text-sm font-medium text-brand-primary flex items-center gap-1"
             >
-              <Plus size={16} /> Save as Group
+              <Plus size={16} /> Save current people as Group
             </button>
           ) : (
             <div className="flex items-center gap-2">
@@ -192,7 +204,7 @@ export default function PeopleStage({ people, onNext, onBack }: PeopleStageProps
                 type="text"
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
-                placeholder="Group Name"
+                placeholder="Group Name (e.g. Work Friends)"
                 className="flex-1 bg-subtle-bg border border-border rounded-lg px-3 py-1.5 text-sm"
               />
               <button onClick={saveGroup} disabled={isSaving || !newGroupName.trim()} className="bg-brand-primary text-white px-3 py-1.5 rounded-lg text-sm font-medium">

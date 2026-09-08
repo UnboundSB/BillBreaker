@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api"
     GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-3.6-flash"
+    GEMINI_MODEL: str = "gemini-3.5-flash"
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB by default
     CORS_ORIGINS: List[str] = ["*"]
 
