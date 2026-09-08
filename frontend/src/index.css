@@ -4,73 +4,73 @@
   --font-sans: "Inter", "Outfit", system-ui, sans-serif;
   
   /* Semantic Color Mapping */
-  --color-surface-bg: var(--color-surface-bg);
-  --color-surface-panel: var(--color-surface-panel);
-  --color-surface-tonal: var(--color-surface-tonal);
-  --color-subtle-bg: var(--color-subtle-bg);
-  --color-border: var(--color-border);
+  --color-surface-bg: var(--app-surface-bg);
+  --color-surface-panel: var(--app-surface-panel);
+  --color-surface-tonal: var(--app-surface-tonal);
+  --color-subtle-bg: var(--app-subtle-bg);
+  --color-border: var(--app-border);
   
-  --color-text-primary: var(--color-text-primary);
-  --color-text-secondary: var(--color-text-secondary);
+  --color-text-primary: var(--app-text-primary);
+  --color-text-secondary: var(--app-text-secondary);
   
-  --color-brand-primary: var(--color-brand-primary);
-  --color-brand-secondary: var(--color-brand-secondary);
-  --color-brand-accent-1: var(--color-brand-accent-1);
-  --color-brand-accent-2: var(--color-brand-accent-2);
-  --color-brand-accent-3: var(--color-brand-accent-3);
+  --color-brand-primary: var(--app-brand-primary);
+  --color-brand-secondary: var(--app-brand-secondary);
+  --color-brand-accent-1: var(--app-brand-accent-1);
+  --color-brand-accent-2: var(--app-brand-accent-2);
+  --color-brand-accent-3: var(--app-brand-accent-3);
   
   /* Semantic States */
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
-  --color-danger: var(--color-danger);
-  --color-info: var(--color-info);
+  --color-success: var(--app-success);
+  --color-warning: var(--app-warning);
+  --color-danger: var(--app-danger);
+  --color-info: var(--app-info);
 }
 
 @layer base {
   :root {
     /* LIGHT THEME */
-    --color-surface-bg: #FFFFFF;
-    --color-surface-panel: #F9FAFB;
-    --color-surface-tonal: #F3F4F6;
-    --color-subtle-bg: #eef2fb;
-    --color-border: #d2daeb;
+    --app-surface-bg: #FFFFFF;
+    --app-surface-panel: #F9FAFB;
+    --app-surface-tonal: #F3F4F6;
+    --app-subtle-bg: #eef2fb;
+    --app-border: #d2daeb;
     
-    --color-text-primary: #000000;
-    --color-text-secondary: #5a6b8c; /* Adapted from dark theme blue #6c8cff */
+    --app-text-primary: #000000;
+    --app-text-secondary: #5a6b8c; /* Adapted from dark theme blue #6c8cff */
     
-    --color-brand-primary: #e0314b;
-    --color-brand-secondary: #7c1221;
-    --color-brand-accent-1: #ee7b99;
-    --color-brand-accent-2: #f4a3b4;
-    --color-brand-accent-3: #c3e8ec;
+    --app-brand-primary: #e0314b;
+    --app-brand-secondary: #7c1221;
+    --app-brand-accent-1: #ee7b99;
+    --app-brand-accent-2: #f4a3b4;
+    --app-brand-accent-3: #c3e8ec;
 
-    --color-success: #7dff95;
-    --color-warning: #ffbc5e;
-    --color-danger: #ff5858;
-    --color-info: #87c1ff;
+    --app-success: #7dff95;
+    --app-warning: #ffbc5e;
+    --app-danger: #ff5858;
+    --app-info: #87c1ff;
   }
 
   .dark {
     /* DARK THEME */
-    --color-surface-bg: #0f1320;
-    --color-surface-panel: #222633;
-    --color-surface-tonal: #171d33;
-    --color-subtle-bg: rgba(255, 255, 255, 0.05);
-    --color-border: rgba(255, 255, 255, 0.1);
+    --app-surface-bg: #0f1320;
+    --app-surface-panel: #222633;
+    --app-surface-tonal: #171d33;
+    --app-subtle-bg: rgba(255, 255, 255, 0.05);
+    --app-border: rgba(255, 255, 255, 0.1);
     
-    --color-text-primary: #FFFFFF;
-    --color-text-secondary: #a4bcff; /* Dark theme secondary */
+    --app-text-primary: #FFFFFF;
+    --app-text-secondary: #a4bcff; /* Dark theme secondary */
     
-    --color-brand-primary: #6c8cff;
-    --color-brand-secondary: #a4bcff;
-    --color-brand-accent-1: #ffb86c;
-    --color-brand-accent-2: #ffce9b;
-    --color-brand-accent-3: #ffdcb8;
+    --app-brand-primary: #6c8cff;
+    --app-brand-secondary: #a4bcff;
+    --app-brand-accent-1: #ffb86c;
+    --app-brand-accent-2: #ffce9b;
+    --app-brand-accent-3: #ffdcb8;
 
-    --color-success: #8dffac;
-    --color-warning: #ffca83;
-    --color-danger: #ff7878;
-    --color-info: #a1dbff;
+    --app-success: #8dffac;
+    --app-warning: #ffca83;
+    --app-danger: #ff7878;
+    --app-info: #a1dbff;
   }
 
   body {
@@ -93,5 +93,10 @@
   }
   .glass {
     @apply bg-surface-bg border-b border-brand-accent-3/20 shadow-sm;
+  }
+  
+  /* Skeuomorphic Frame for Desktop */
+  .skeuomorphic-frame {
+    @apply border-[16px] lg:border-[24px] border-surface-tonal/90 rounded-[32px] md:rounded-[48px] shadow-[inset_0_4px_6px_rgba(255,255,255,0.5),inset_0_-4px_6px_rgba(0,0,0,0.2),0_0_0_1px_rgba(0,0,0,0.05),0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-500;
   }
 }
