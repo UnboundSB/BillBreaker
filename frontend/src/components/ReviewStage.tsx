@@ -12,7 +12,7 @@ interface ReviewStageProps {
 export default function ReviewStage({ bill: initialBill, onNext, onBack }: ReviewStageProps) {
   const [bill, setBill] = useState<Bill>(initialBill);
   const [showWarningModal, setShowWarningModal] = useState(false);
-  const currency = bill.currency_symbol || '$';
+  const currency = bill.currency_symbol || '₹';
 
   // Math Validation
   const calculatedItemsTotal = bill.items.reduce((sum, item) => sum + (Number(item.item_total) || 0), 0);

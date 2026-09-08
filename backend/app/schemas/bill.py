@@ -37,7 +37,7 @@ class Bill(BaseModel):
     service_charge: StrictDecimal = Field(default=Decimal('0.00'))
     discount: StrictDecimal = Field(default=Decimal('0.00'))
     printed_total: StrictDecimal
-    currency_symbol: str = Field(default="$", max_length=5)
+    currency_symbol: str = Field(default="₹", max_length=5)
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
 
 class Person(BaseModel):
@@ -67,5 +67,5 @@ class SplitResult(BaseModel):
     calculated_total: StrictDecimal
     printed_total: StrictDecimal
     mismatch_amount: Decimal = Field(max_digits=10, decimal_places=2) # Can be negative
-    currency_symbol: str = Field(default="$", max_length=5)
+    currency_symbol: str = Field(default="₹", max_length=5)
     people_breakdowns: List[PersonBreakdown]

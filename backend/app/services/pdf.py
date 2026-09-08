@@ -19,9 +19,9 @@ def generate_split_pdf(result: SplitResult) -> bytes:
     # Overview
     elements.append(Paragraph("Total Overview", styles['Heading2']))
     overview_data = [
-        ["Calculated Total:", f"${result.calculated_total:.2f}"],
-        ["Printed Total:", f"${result.printed_total:.2f}"],
-        ["Mismatch (Tip/Rounding):", f"${result.mismatch_amount:.2f}"]
+        ["Calculated Total:", f"₹{result.calculated_total:.2f}"],
+        ["Printed Total:", f"₹{result.printed_total:.2f}"],
+        ["Mismatch (Tip/Rounding):", f"₹{result.mismatch_amount:.2f}"]
     ]
     t = Table(overview_data, colWidths=[200, 100])
     t.setStyle(TableStyle([
@@ -40,11 +40,11 @@ def generate_split_pdf(result: SplitResult) -> bytes:
         elements.append(Paragraph(f"{person.name}", styles['Heading3']))
         
         person_data = [
-            ["Items Total:", f"${person.items_total:.2f}"],
-            ["Tax:", f"${person.tax:.2f}"],
-            ["Service Charge:", f"${person.service_charge:.2f}"],
-            ["Discount:", f"${person.discount:.2f}"],
-            ["Final Total to Pay:", f"${person.total:.2f}"]
+            ["Items Total:", f"₹{person.items_total:.2f}"],
+            ["Tax:", f"₹{person.tax:.2f}"],
+            ["Service Charge:", f"₹{person.service_charge:.2f}"],
+            ["Discount:", f"₹{person.discount:.2f}"],
+            ["Grand Total:", f"₹{person.total:.2f}"]
         ]
         
         pt = Table(person_data, colWidths=[200, 100])

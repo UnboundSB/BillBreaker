@@ -22,7 +22,7 @@ export default function UploadStage({ onUploadComplete }: UploadStageProps) {
       service_charge: 0,
       discount: 0,
       printed_total: 0,
-      currency_symbol: '$'
+      currency_symbol: '₹'
     });
   };
 

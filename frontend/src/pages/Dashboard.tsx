@@ -76,7 +76,7 @@ export default function Dashboard() {
           <div className="glass-panel p-6 md:col-span-2 flex flex-col items-center justify-center bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10">
             <h2 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-2">Total Split History</h2>
             <div className="text-4xl md:text-5xl font-black text-brand-primary">
-              ${data.total_spent.toFixed(2)}
+              ₹{data.total_spent.toFixed(2)}
             </div>
           </div>
 
@@ -87,9 +87,9 @@ export default function Dashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.by_category} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <XAxis dataKey="category" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                  <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} />
                   <Tooltip 
-                    formatter={(value: number) => [`$${value.toFixed(2)}`, 'Total']} 
+                    formatter={(value: number) => [`₹${value.toFixed(2)}`, 'Total']} 
                     cursor={{fill: 'rgba(255,255,255,0.05)'}}
                     contentStyle={{ borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', background: 'var(--surface-panel)' }}
                   />
@@ -120,7 +120,7 @@ export default function Dashboard() {
                     ))}
                   </Pie>
                   <Tooltip 
-                    formatter={(value: number) => [`$${value.toFixed(2)}`, 'Total']}
+                    formatter={(value: number) => [`₹${value.toFixed(2)}`, 'Total']}
                     contentStyle={{ borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', background: 'var(--surface-panel)' }}
                   />
                   <Legend verticalAlign="bottom" height={36}/>

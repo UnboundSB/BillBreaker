@@ -19,7 +19,7 @@ export default function ResultsStage({ results, bill, people, assignments, onUpd
   
   const mismatch = Number(results.mismatch_amount);
   const hasMismatch = Math.abs(mismatch) > 0.01;
-  const currency = results.currency_symbol || '$';
+  const currency = results.currency_symbol || '₹';
 
   const downloadPdf = async () => {
     try {

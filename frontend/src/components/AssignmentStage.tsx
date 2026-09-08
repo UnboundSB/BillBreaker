@@ -122,7 +122,7 @@ export default function AssignmentStage({ bill, people, assignments: initialAssi
                 <div className="min-w-0 flex-1">
                   <h3 className="font-semibold text-lg text-text-primary truncate">{item.name}</h3>
                   <div className="text-sm text-text-secondary flex items-center gap-2">
-                    <span>Qty: {item.quantity} × {bill.currency_symbol || '$'}{Number(item.item_total).toFixed(2)}</span>
+                    <span>Qty: {item.quantity} × {bill.currency_symbol || '₹'}{Number(item.item_total).toFixed(2)}</span>
                     {item.category && (
                       <span className="px-2 py-0.5 rounded-md bg-brand-primary/10 text-brand-primary text-xs uppercase tracking-wider font-semibold">
                         {item.category}

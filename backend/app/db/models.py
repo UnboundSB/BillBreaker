@@ -47,7 +47,7 @@ class PastBill(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     owner_id = Column(String, ForeignKey("users.id"))
     total_amount = Column(Float, nullable=False)
-    currency_symbol = Column(String, default="$")
+    currency_symbol = Column(String, default="₹")
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     owner = relationship("User", back_populates="bills")

@@ -37,7 +37,7 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
     prompt = (
         "Extract the structured information from this bill or receipt. "
         "Include all items, quantities, and prices. Extract the subtotal, tax, service charge, discount, and printed total. "
-        "Extract the currency symbol used on the bill (e.g. $, €, £). If none is found, default to $. "
+        "Extract the currency symbol used on the bill (e.g. ₹, €, £). If none is found, default to ₹. "
         "For each item, determine its category. Must be exactly one of: food, drink, alcohol, shared, tax, service, discount. "
         "For EVERY field (each item and the overall bill), provide a 'confidence' score between 0.0 and 1.0 "
         "indicating how confident you are in your extraction. 1.0 means perfectly confident, lower scores indicate ambiguity (e.g., blurry text, handwriting)."
