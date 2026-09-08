@@ -13,6 +13,7 @@ class GeminiBillItem(BaseModel):
     quantity: int
     unit_price: float
     item_total: float
+    confidence: float
 
 class GeminiBill(BaseModel):
     items: List[GeminiBillItem]
@@ -21,6 +22,8 @@ class GeminiBill(BaseModel):
     service_charge: float
     discount: float
     printed_total: float
+    currency_symbol: str
+    confidence: float
 
 def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
     api_key = settings.GEMINI_API_KEY
@@ -30,11 +33,19 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
     client = genai.Client(api_key=api_key)
     model_name = settings.GEMINI_MODEL
     
+    prompt = (
+        "Extract the structured information from this bill or receipt. "
+        "Include all items, quantities, and prices. Extract the subtotal, tax, service charge, discount, and printed total. "
+        "Extract the currency symbol used on the bill (e.g. $, €, £). If none is found, default to $. "
+        "For EVERY field (each item and the overall bill), provide a 'confidence' score between 0.0 and 1.0 "
+        "indicating how confident you are in your extraction. 1.0 means perfectly confident, lower scores indicate ambiguity (e.g., blurry text, handwriting)."
+    )
+
     response = client.models.generate_content(
         model=model_name,
         contents=[
             types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
-            "Extract the structured information from this bill or receipt. Include all items, quantities, and prices. Extract the subtotal, tax, service charge, discount, and printed total."
+            prompt
         ],
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
@@ -56,7 +67,8 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
             name=item.name,
             quantity=item.quantity,
             unit_price=Decimal(str(item.unit_price)),
-            item_total=Decimal(str(item.item_total))
+            item_total=Decimal(str(item.item_total)),
+            confidence=item.confidence
         ))
         
     return Bill(
@@ -65,5 +77,7 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
         tax=Decimal(str(gemini_bill.tax)),
         service_charge=Decimal(str(gemini_bill.service_charge)),
         discount=Decimal(str(gemini_bill.discount)),
-        printed_total=Decimal(str(gemini_bill.printed_total))
+        printed_total=Decimal(str(gemini_bill.printed_total)),
+        currency_symbol=gemini_bill.currency_symbol,
+        confidence=gemini_bill.confidence
     )

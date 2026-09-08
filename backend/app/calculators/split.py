@@ -104,5 +104,6 @@ def calculate_split(request: SplitRequest) -> SplitResult:
         calculated_total=calculated_total,
         printed_total=bill.printed_total,
         mismatch_amount=mismatch_amount,
+        currency_symbol=bill.currency_symbol,
         people_breakdowns=breakdowns
     )

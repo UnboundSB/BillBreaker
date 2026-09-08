@@ -1,27 +1,97 @@
-:root {
-  --bg-color: #f9f7ef; /* Off-white beige */
-  --surface-color: #ede4b2; /* Beige from palette */
-  --text-color: #2d2a2a; 
-  --text-muted: #b3828a; /* Mauve from palette */
-  --primary-color: #c76372; /* Rose from palette */
-  --accent-color: #adf7ec; /* Mint from palette */
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Outfit", system-ui, sans-serif;
+  
+  /* Semantic Color Mapping */
+  --color-surface-bg: var(--color-surface-bg);
+  --color-surface-panel: var(--color-surface-panel);
+  --color-surface-tonal: var(--color-surface-tonal);
+  --color-subtle-bg: var(--color-subtle-bg);
+  --color-border: var(--color-border);
+  
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-secondary: var(--color-brand-secondary);
+  --color-brand-accent-1: var(--color-brand-accent-1);
+  --color-brand-accent-2: var(--color-brand-accent-2);
+  --color-brand-accent-3: var(--color-brand-accent-3);
+  
+  /* Semantic States */
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-info: var(--color-info);
 }
 
-:root.dark {
-  --bg-color: #18191a; /* Off black */
-  --surface-color: #242526; 
-  --text-color: #cfd6ff; /* Periwinkle from palette */
-  --text-muted: #b3828a; 
-  --primary-color: #c76372;
-  --accent-color: #adf7ec; 
+@layer base {
+  :root {
+    /* LIGHT THEME - Contrast Overhaul */
+    --color-surface-bg: #f9f7ef; /* Off-white beige background */
+    --color-surface-panel: #ffffff; /* Crisp white for panels so they pop */
+    --color-surface-tonal: #ede4b2; /* Beige for secondary buttons */
+    --color-subtle-bg: rgba(179, 130, 138, 0.08); /* Subtle mauve tint for hovers */
+    --color-border: rgba(179, 130, 138, 0.25); /* Transparent Mauve for borders */
+    
+    --color-text-primary: #1a1a1c;
+    --color-text-secondary: #b3828a; /* Mauve for subtle text */
+    
+    --color-brand-primary: #c76372; /* Rose */
+    --color-brand-secondary: #3b9b90; /* Darker Turquoise for contrast */
+    --color-brand-accent-1: #c76372;
+    --color-brand-accent-2: #3b9b90;
+    --color-brand-accent-3: #cfd6ff; /* Periwinkle */
+
+    --color-success: #adf7ec;
+    --color-warning: #ede4b2;
+    --color-danger: #c76372;
+    --color-info: #cfd6ff;
+  }
+
+  .dark {
+    /* DARK THEME - Kept for contrast */
+    --color-surface-bg: #141415; /* Deeper off-black */
+    --color-surface-panel: #1e1e20; /* Slightly lighter off-black for panels */
+    --color-surface-tonal: #262629;
+    --color-subtle-bg: rgba(255, 255, 255, 0.05);
+    --color-border: rgba(207, 214, 255, 0.15); /* Periwinkle transparent border */
+    
+    --color-text-primary: #f9f7ef;
+    --color-text-secondary: #cfd6ff; /* Periwinkle text on dark */
+    
+    --color-brand-primary: #c76372; /* Rose */
+    --color-brand-secondary: #adf7ec; /* Mint */
+    --color-brand-accent-1: #c76372;
+    --color-brand-accent-2: #adf7ec;
+    --color-brand-accent-3: #cfd6ff;
+
+    --color-success: #adf7ec;
+    --color-warning: #ede4b2;
+    --color-danger: #c76372;
+    --color-info: #cfd6ff;
+  }
+
+  body {
+    @apply bg-surface-bg text-text-primary antialiased selection:bg-brand-primary/40 min-h-screen relative overflow-x-hidden transition-colors duration-300;
+  }
 }
 
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.5s ease-in, color 0.5s ease-in;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  min-width: 320px;
-  min-height: 100vh;
+@layer components {
+  .glass-panel {
+    @apply bg-surface-panel border border-border shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-[24px] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)];
+  }
+  .glass-input {
+    @apply bg-surface-bg border border-border focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-text-primary placeholder-text-secondary/60 rounded-xl px-4 py-3 transition-all duration-300;
+  }
+  .glass-button {
+    @apply bg-brand-primary hover:opacity-90 text-white font-semibold rounded-xl shadow-[0_4px_14px_rgba(199,99,114,0.3)] transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none;
+  }
+  .glass-button-secondary {
+    @apply bg-surface-tonal hover:bg-surface-tonal/80 border border-border text-text-primary font-medium rounded-xl transition-all duration-300;
+  }
+  .glass {
+    @apply bg-surface-bg/80 backdrop-blur-md border-b border-border shadow-sm;
+  }
 }
