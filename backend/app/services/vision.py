@@ -13,6 +13,7 @@ class GeminiBillItem(BaseModel):
     quantity: int
     unit_price: float
     item_total: float
+    category: str
     confidence: float
 
 class GeminiBill(BaseModel):
@@ -33,10 +34,10 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
     client = genai.Client(api_key=api_key)
     model_name = settings.GEMINI_MODEL
     
-    prompt = (
         "Extract the structured information from this bill or receipt. "
         "Include all items, quantities, and prices. Extract the subtotal, tax, service charge, discount, and printed total. "
         "Extract the currency symbol used on the bill (e.g. $, €, £). If none is found, default to $. "
+        "For each item, determine its category. Must be exactly one of: food, drink, alcohol, shared, tax, service, discount. "
         "For EVERY field (each item and the overall bill), provide a 'confidence' score between 0.0 and 1.0 "
         "indicating how confident you are in your extraction. 1.0 means perfectly confident, lower scores indicate ambiguity (e.g., blurry text, handwriting)."
     )
@@ -68,6 +69,7 @@ def extract_bill_from_image(image_bytes: bytes, mime_type: str) -> Bill:
             quantity=item.quantity,
             unit_price=Decimal(str(item.unit_price)),
             item_total=Decimal(str(item.item_total)),
+            category=item.category if item.category in ["food", "drink", "alcohol", "shared", "tax", "service", "discount"] else "food",
             confidence=item.confidence
         ))
         

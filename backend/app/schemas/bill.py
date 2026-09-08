@@ -10,12 +10,24 @@ IDStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, ma
 # Strict Decimal type to prevent massive numbers (up to 99,999,999.99)
 StrictDecimal = Annotated[Decimal, Field(max_digits=10, decimal_places=2, ge=0)]
 
+from enum import Enum
+
+class ItemCategory(str, Enum):
+    food = "food"
+    drink = "drink"
+    alcohol = "alcohol"
+    shared = "shared"
+    tax = "tax"
+    service = "service"
+    discount = "discount"
+
 class BillItem(BaseModel):
     id: IDStr
     name: StrictStr
     quantity: int = Field(ge=1, le=10000, default=1)
     unit_price: StrictDecimal
     item_total: StrictDecimal
+    category: ItemCategory = Field(default=ItemCategory.food)
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
 
 class Bill(BaseModel):
@@ -35,6 +47,7 @@ class Person(BaseModel):
 class ItemAssignment(BaseModel):
     item_id: IDStr
     person_ids: List[IDStr] = Field(max_length=100)
+    person_shares: dict[IDStr, float] = Field(default_factory=dict)
 
 class SplitRequest(BaseModel):
     bill: Bill

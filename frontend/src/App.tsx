@@ -14,7 +14,12 @@ import { BackgroundElements } from './components/BackgroundElements';
 
 export type Stage = 'upload' | 'review' | 'people' | 'assign' | 'results';
 
-function App() {
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import AuthPage from './pages/AuthPage';
+import Dashboard from './pages/Dashboard';
+import { useAuth } from './lib/AuthContext';
+
+function Splitter() {
   const [currentStage, setCurrentStage] = useState<Stage>('upload');
   const [bill, setBill] = useState<Bill | null>(null);
   const [people, setPeople] = useState<Person[]>([]);
@@ -31,6 +36,8 @@ function App() {
 
   const stageIndices: Record<Stage, number> = { upload: 0, review: 1, people: 2, assign: 3, results: 4 };
   const stageIndex = stageIndices[currentStage];
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="font-sans relative">
@@ -38,7 +45,7 @@ function App() {
       
       {/* Premium Header */}
       <header className="sticky top-0 z-50 glass !rounded-none !border-x-0 !border-t-0 px-2 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-brand-primary to-brand-secondary flex items-center justify-center shadow-sm">
             <Sparkles className="text-white w-3 h-3 sm:w-4 sm:h-4" />
           </div>
@@ -48,7 +55,7 @@ function App() {
         </div>
 
         {/* Stepper */}
-        <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar max-w-[60vw] md:max-w-none">
+        <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar max-w-[50vw] md:max-w-none">
           {stages.map((stage, idx) => {
             const isActive = currentStage === stage.id;
             const isPast = stages.findIndex((s) => s.id === currentStage) > idx;
@@ -74,7 +81,19 @@ function App() {
           })}
         </nav>
         
-        <ThemeToggle />
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium hidden md:block">Hi, {user.full_name || user.email}</span>
+              <button onClick={logout} className="text-xs text-brand-primary font-medium">Log out</button>
+            </div>
+          ) : (
+            <button onClick={() => navigate('/login')} className="text-sm font-medium text-brand-primary border border-brand-primary/30 px-3 py-1 rounded-full hover:bg-brand-primary/10 transition-colors">
+              Log in
+            </button>
+          )}
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Main Content Area */}
@@ -104,8 +123,8 @@ function App() {
                   }));
                   setAssignments(autoAssignments);
                   try {
-                    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-                    const res = await fetch(`${apiUrl}/api/v1/bills/calculate`, {
+                    const apiUrl = import.meta.env.VITE_API_URL || '';
+                    const res = await fetch(`${apiUrl}/api/calculate`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ bill: bill, people: p, assignments: autoAssignments })
@@ -127,15 +146,35 @@ function App() {
               <AssignmentStage bill={bill!} people={people} assignments={assignments} onNext={(a, r) => { setAssignments(a); setResults(r); setCurrentStage('results'); }} onBack={() => setCurrentStage('people')} />
             )}
             {currentStage === 'results' && (
-              <ResultsStage results={results!} onRestart={() => {
-                setBill(null); setPeople([]); setAssignments([]); setResults(null); setCurrentStage('upload');
-              }} />
+              <ResultsStage 
+                results={results!} 
+                bill={bill!}
+                people={people}
+                assignments={assignments}
+                onUpdateResults={(newAssignments, newResults) => {
+                  setAssignments(newAssignments);
+                  setResults(newResults);
+                }}
+                onRestart={() => {
+                  setBill(null); setPeople([]); setAssignments([]); setResults(null); setCurrentStage('upload');
+                }} 
+              />
             )}
           </motion.div>
         </AnimatePresence>
       </main>
 
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Splitter />} />
+      <Route path="/login" element={<AuthPage />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+    </Routes>
   );
 }
 

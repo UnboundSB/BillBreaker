@@ -14,10 +14,18 @@ interface AssignmentStageProps {
 
 export default function AssignmentStage({ bill, people, assignments: initialAssignments, onNext, onBack }: AssignmentStageProps) {
   const [assignments, setAssignments] = useState<ItemAssignment[]>(
-    initialAssignments.length > 0 ? initialAssignments : bill.items.map(item => ({
-      item_id: item.id,
-      person_ids: []
-    }))
+    initialAssignments.length > 0 ? initialAssignments : bill.items.map(item => {
+      let assignedPeople: string[] = [];
+      if (item.category === 'drink' || item.category === 'alcohol') {
+        if (people.length > 0) assignedPeople = [people[0].id];
+      } else if (item.category === 'shared') {
+        assignedPeople = people.map(p => p.id);
+      }
+      return {
+        item_id: item.id,
+        person_ids: assignedPeople
+      };
+    })
   );
   
   const [isLoading, setIsLoading] = useState(false);
@@ -113,8 +121,13 @@ export default function AssignmentStage({ bill, people, assignments: initialAssi
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0 flex-1">
                   <h3 className="font-semibold text-lg text-text-primary truncate">{item.name}</h3>
-                  <div className="text-sm text-text-secondary">
-                    Qty: {item.quantity} × {bill.currency_symbol || '$'}{Number(item.item_total).toFixed(2)}
+                  <div className="text-sm text-text-secondary flex items-center gap-2">
+                    <span>Qty: {item.quantity} × {bill.currency_symbol || '$'}{Number(item.item_total).toFixed(2)}</span>
+                    {item.category && (
+                      <span className="px-2 py-0.5 rounded-md bg-brand-primary/10 text-brand-primary text-xs uppercase tracking-wider font-semibold">
+                        {item.category}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <button

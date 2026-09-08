@@ -4,6 +4,9 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
 from app.api.endpoints import router as api_router
+from app.api.auth import router as auth_router
+from app.api.groups import router as groups_router
+from app.api.analytics import router as analytics_router
 from app.core.config import settings
 import logging
 
@@ -55,7 +58,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
-
+app.include_router(auth_router, prefix=settings.API_V1_STR + "/auth", tags=["auth"])
+app.include_router(groups_router, prefix=settings.API_V1_STR + "/groups", tags=["groups"])
+app.include_router(analytics_router, prefix=settings.API_V1_STR + "/analytics", tags=["analytics"])
 @app.get(f"{settings.API_V1_STR}/health")
 def health_check():
     return {"status": "ok"}

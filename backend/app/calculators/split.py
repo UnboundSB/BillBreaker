@@ -43,7 +43,7 @@ def _distribute_amount(amount: Decimal, weights: List[Decimal]) -> List[Decimal]
 def calculate_split(request: SplitRequest) -> SplitResult:
     bill = request.bill
     people = request.people
-    assignments = {a.item_id: a.person_ids for a in request.assignments}
+    assignments_dict = {a.item_id: a for a in request.assignments}
     
     # Dictionary to keep track of person totals
     # person_id -> items_total
@@ -56,14 +56,22 @@ def calculate_split(request: SplitRequest) -> SplitResult:
         item_total = item.item_total
         bill_subtotal += item_total
         
-        assigned_person_ids = assignments.get(item.id, [])
-        if not assigned_person_ids:
+        assignment = assignments_dict.get(item.id)
+        if not assignment or not assignment.person_ids:
             # If an item is unassigned, it shouldn't really happen if UI prevents it, 
             # but if it does, we can either ignore or assign to everyone. Let's ignore for now.
             continue
             
-        # Distribute equally among assigned people
-        weights = [Decimal('1.00') for _ in assigned_person_ids]
+        assigned_person_ids = assignment.person_ids
+        
+        # Distribute based on shares if provided, else equally
+        weights = []
+        for pid in assigned_person_ids:
+            if assignment.person_shares and pid in assignment.person_shares:
+                weights.append(Decimal(str(assignment.person_shares[pid])))
+            else:
+                weights.append(Decimal('1.00'))
+                
         shares = _distribute_amount(item_total, weights)
         
         for pid, share in zip(assigned_person_ids, shares):

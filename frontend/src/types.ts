@@ -4,6 +4,7 @@ export interface BillItem {
   quantity: number;
   unit_price: number | string;
   item_total: number | string;
+  category?: 'food' | 'drink' | 'alcohol' | 'shared' | 'tax' | 'service' | 'discount';
   confidence?: number;
 }
 
@@ -26,6 +27,7 @@ export interface Person {
 export interface ItemAssignment {
   item_id: string;
   person_ids: string[];
+  person_shares?: Record<string, number>;
 }
 
 export interface SplitRequest {

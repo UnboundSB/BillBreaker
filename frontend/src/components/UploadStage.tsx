@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, Loader2, AlertCircle } from 'lucide-react';
+import { Upload, Camera, Loader2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Bill } from '../types';
 
@@ -12,6 +12,7 @@ export default function UploadStage({ onUploadComplete }: UploadStageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -68,43 +69,66 @@ export default function UploadStage({ onUploadComplete }: UploadStageProps) {
       >
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">Snap Your Bill</h2>
-          <p className="text-text-secondary dark:text-text-secondary">Upload a photo of your receipt and let AI do the heavy lifting.</p>
+          <p className="text-text-secondary dark:text-text-secondary">Take a photo or upload a receipt and let AI do the heavy lifting.</p>
         </div>
 
-        <div
-          onClick={() => !isLoading && fileInputRef.current?.click()}
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          onDrop={onDrop}
-          className={`
-            relative group overflow-hidden rounded-3xl border border-dashed p-12 text-center cursor-pointer transition-all duration-300 glass-panel
-            ${isDragging ? 'border-brand-primary bg-brand-primary/10 shadow-[0_0_20px_rgba(0,240,255,0.3)]' : 'border-border hover:border-brand-primary/50 hover:bg-surface-tonal'}
-            ${isLoading ? 'pointer-events-none opacity-80' : ''}
-          `}
-        >
-          {/* Animated Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-            accept="image/*"
-            className="hidden"
-          />
-
-          <div className="relative z-10 flex flex-col items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-subtle-bg border border-border flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-primary/10 group-hover:border-brand-primary/30 transition-all duration-300 shadow-sm">
-              <Upload size={32} className="text-brand-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Take Photo Button */}
+          <div
+            onClick={() => !isLoading && cameraInputRef.current?.click()}
+            className={`
+              relative group overflow-hidden rounded-3xl border border-border p-8 text-center cursor-pointer transition-all duration-300 glass-panel hover:border-brand-primary/50 hover:bg-surface-tonal
+              ${isLoading ? 'pointer-events-none opacity-80' : ''}
+            `}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <input
+              type="file"
+              ref={cameraInputRef}
+              onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+            />
+            <div className="relative z-10 flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-subtle-bg border border-border flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-primary/10 group-hover:border-brand-primary/30 transition-all duration-300 shadow-sm">
+                <Camera size={28} className="text-brand-primary" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-text-primary">Take Photo</p>
+                <p className="text-xs text-text-secondary mt-1">Use device camera</p>
+              </div>
             </div>
-            
-            <div>
-              <p className="text-lg font-semibold text-text-primary">
-                Click or drag image here
-              </p>
-              <p className="text-sm text-text-secondary mt-1">
-                Supports JPG, PNG up to 10MB
-              </p>
+          </div>
+
+          {/* Upload File Button */}
+          <div
+            onClick={() => !isLoading && fileInputRef.current?.click()}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+            className={`
+              relative group overflow-hidden rounded-3xl border border-dashed p-8 text-center cursor-pointer transition-all duration-300 glass-panel
+              ${isDragging ? 'border-brand-primary bg-brand-primary/10 shadow-[0_0_20px_rgba(0,240,255,0.3)]' : 'border-border hover:border-brand-primary/50 hover:bg-surface-tonal'}
+              ${isLoading ? 'pointer-events-none opacity-80' : ''}
+            `}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+              accept="image/*"
+              className="hidden"
+            />
+            <div className="relative z-10 flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-subtle-bg border border-border flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-primary/10 group-hover:border-brand-primary/30 transition-all duration-300 shadow-sm">
+                <Upload size={28} className="text-brand-primary" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-text-primary">Upload File</p>
+                <p className="text-xs text-text-secondary mt-1">Click or drag image</p>
+              </div>
             </div>
           </div>
         </div>
